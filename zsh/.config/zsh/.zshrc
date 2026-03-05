@@ -40,7 +40,7 @@ setopt AUTO_PUSHD
 setopt PUSHD_IGNORE_DUPS
 setopt PUSHD_SILENT
 
-# PATH setup (N qualifier skips non-existent directories)
+# PATH setup ()
 path=(
   $BUN_INSTALL/bin(N)
   /opt/homebrew/{bin,sbin}(N)
@@ -124,13 +124,14 @@ znap eval zoxide 'zoxide init zsh'
 znap eval try 'ruby ~/.local/try.rb init ~/Developer/tries'
 
 # Completions
-znap eval bun-completion 'cat "$HOME/.bun/_bun"'
+znap eval bun 'cat "$HOME/.bun/_bun"'
 znap eval brew 'brew shellenv'
-znap fpath _tailscale 'tailscale completion zsh'
-znap fpath _uv 'uv generate-shell-completion zsh' 
-znap fpath _uvx 'uvx --generate-shell-completion zsh' 
-znap fpath _rustup  'rustup  completions zsh'
-znap fpath _cargo   'rustup  completions zsh cargo'
+# TODO: Fix all issues related to fpath lagging completions w/ znap
+# znap fpath _tailscale 'tailscale completion zsh'
+# znap fpath _uv 'uv generate-shell-completion zsh' 
+# znap fpath _uvx 'uvx --generate-shell-completion zsh' 
+# znap fpath _rustup  'rustup  completions zsh'
+# znap fpath _cargo   'rustup  completions zsh cargo'
 
 # Lazy-load heavy tools on first use
 znap function _nvm nvm 'source "$NVM_DIR/nvm.sh"'
