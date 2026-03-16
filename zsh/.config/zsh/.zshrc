@@ -126,6 +126,7 @@ znap eval try 'ruby ~/.local/try.rb init ~/Developer/tries'
 # Completions
 znap eval bun 'cat "$HOME/.bun/_bun"'
 znap eval brew 'brew shellenv'
+# znap fpath _glow 'glow completion zsh'
 # TODO: Fix all issues related to fpath lagging completions w/ znap
 # znap fpath _tailscale 'tailscale completion zsh'
 # znap fpath _uv 'uv generate-shell-completion zsh' 
@@ -163,3 +164,6 @@ alias gg="git add "
 alias gs="git status"
 alias gst="git stash"
 alias gstp="git stash pop"
+
+# bun completions
+[ -s "/Users/charon/.bun/_bun" ] && source "/Users/charon/.bun/_bun"
