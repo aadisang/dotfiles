@@ -1,5 +1,5 @@
 font-size = 14
-font-family = "GeistMono NF"
+font-family = "GeistMono Nerd Font"
 window-title-font-family = "Geist"
 theme = yoru
 keybind = shift+enter=text:\n

@@ -17,9 +17,10 @@ export EDITOR="zed"
 export VISUAL="zed"
 export PNPM_HOME="$HOME/.local/share/pnpm"
 export ANDROID_HOME=$HOME/Library/Android/sdk
-export NVM_DIR="$HOME/.nvm"
 export SDKMAN_DIR="$HOME/.sdkman"
-export QMK_HOME="~/qmk_firmware"
+export QMK_HOME="$HOME/qmk_firmware"
+
+typeset -U path fpath
 
 # History settings
 export HISTFILE="$ZDOTDIR/.zsh_history"
@@ -54,12 +55,20 @@ path=(
   /Applications/iTerm.app/Contents/Resources/utilities(N)
 )
 
+# Completion functions need to be on $fpath before compinit runs.
+fpath=(
+  $BUN_INSTALL(N)
+  $fpath
+)
+
+# Vite+ ships an env script that sets PATH and the vp() wrapper.
+[ -r "$HOME/.vite-plus/env" ] && . "$HOME/.vite-plus/env"
+
 # Znap repos directory
 zstyle ':znap:*' repos-dir $ZDOTDIR/.zsh-plugins
 
 # Tab completion styles 
 zstyle ':completion:*' menu select
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*:descriptions' format '%F{#e79881}%B%d%b%f'
 zstyle ':completion:*:warnings' format '%F{#df5b61}No matches found%f'
@@ -86,6 +95,7 @@ local -a _ls_colors=(
 )
 export LS_COLORS="${(j.:.)_ls_colors}"
 export EZA_COLORS="da=38;5;244:sb=38;5;244:sn=38;5;244:uu=38;5;150:un=38;5;204:gu=38;5;150:gn=38;5;204"
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 typeset -gA ZSH_HIGHLIGHT_STYLES
 ZSH_HIGHLIGHT_STYLES[default]='fg=#edeff0'
 ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#df5b61'
@@ -124,20 +134,17 @@ znap eval zoxide 'zoxide init zsh'
 znap eval try 'ruby ~/.local/try.rb init ~/Developer/tries'
 
 # Completions
-znap eval bun 'cat "$HOME/.bun/_bun"'
 znap eval brew 'brew shellenv'
-# znap fpath _glow 'glow completion zsh'
-# TODO: Fix all issues related to fpath lagging completions w/ znap
-# znap fpath _tailscale 'tailscale completion zsh'
-# znap fpath _uv 'uv generate-shell-completion zsh' 
-# znap fpath _uvx 'uvx --generate-shell-completion zsh' 
-# znap fpath _rustup  'rustup  completions zsh'
-# znap fpath _cargo   'rustup  completions zsh cargo'
+
+local _sitefunc=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/site-functions
+[[ -x ${commands[glow]-} ]] && [[ ! -e $_sitefunc/_glow ]] && znap fpath _glow 'glow completion zsh'
+[[ -x ${commands[tailscale]-} ]] && [[ ! -e $_sitefunc/_tailscale ]] && znap fpath _tailscale 'tailscale completion zsh'
+[[ -x ${commands[uv]-} ]] && [[ ! -e $_sitefunc/_uv ]] && znap fpath _uv 'uv generate-shell-completion zsh'
+[[ -x ${commands[uvx]-} ]] && [[ ! -e $_sitefunc/_uvx ]] && znap fpath _uvx 'uvx --generate-shell-completion zsh'
+[[ -x ${commands[rustup]-} ]] && [[ ! -e $_sitefunc/_rustup ]] && znap fpath _rustup 'rustup completions zsh'
+[[ -x ${commands[rustup]-} ]] && [[ ! -e $_sitefunc/_cargo ]] && znap fpath _cargo 'rustup completions zsh cargo'
 
 # Lazy-load heavy tools on first use
-znap function _nvm nvm 'source "$NVM_DIR/nvm.sh"'
-compctl -K _nvm nvm
-
 znap function _sdk sdk 'source "$SDKMAN_DIR/bin/sdkman-init.sh"'
 compctl -K _sdk sdk
 

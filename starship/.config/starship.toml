@@ -1,181 +1,30 @@
 format = """\
-[╭╴](fg:arrow)\
-$username\
-$os\
+$character\
+$directory\
 $git_branch\
-$git_commit\
-$git_state\
-(\
-    at \
-    $directory\
-)\
-$cmd_duration\
-(\
-    with \
-    $python\
-    $conda\
-    $nodejs\
-    $bun\
-    $swift\
-    $c\
-    $rust\
-    $java\
-    $golang\
-)\
-$package
-[╰─](fg:arrow)$character\
+${custom.git_dirty}\
 """
 
-# Disable the blank line at the start of the prompt
-add_newline = true
-palette = "normal"
-
-[palettes.normal]
-arrow = "#2c2e2f"
-os = "#70b8ca"
-os_admin = "#e79881"
-directory = "#709ad2"
-time = "#70b8ca"
-node = "#81c19b"
-git = "#e79881"
-git_status = "#e4e6e7"
-python = "#e79881"
-conda = "#81c19b"
-java = "#e8646a"
-rust = "#de8f78"
-bun = "#c58cec"
-golang = "#70b8ca"
-clang = "#70b8ca"
-swift = "#709ad2"
-duration = "#df5b61"
-package = "#c58cec"
-text_color = "#edeff0"
-text_light = "#0c0e0f"
-
-[username]
-style_user = 'bold os'
-style_root = 'bold os_admin'
-format = '[  $user](fg:$style) '
-disabled = false
-show_always = true
-
-[os]
-format = "on [($name)]($style) "
-style = "bold blue"
-disabled = true
-
-[os.symbols]
-Alpine = " "
-Arch = " "
-Debian = " "
-EndeavourOS = " "
-Fedora = " "
-Linux = " "
-Macos = " "
-Manjaro = " "
-Mint = " "
-NixOS = " "
-openSUSE = " "
-Pop = " "
-SUSE = " "
-Ubuntu = " "
-Windows = " "
+add_newline = false
 
 [character]
-success_symbol = "[󰍟](fg:arrow)"
-error_symbol = "[󰍟](fg:red)"
+success_symbol = '[➜](bold green)'
+error_symbol = '[➜](bold red)'
 
 [directory]
-format = "[$path](bold $style)[$read_only]($read_only_style) "
-truncation_length = 3
-style = "fg:directory"
-read_only_style = "fg:directory"
-before_repo_root_style = "fg:directory"
-truncation_symbol = "…/"
-truncate_to_repo = true
-read_only ="  "
-
-[time]
-disabled = true
-format = "at [󱑈 $time]($style)"
-time_format = "%H:%M"
-style = "bold fg:time"
+format = '[$path](bold cyan) '
+truncation_length = 1
+truncate_to_repo = false
 
 [git_branch]
-format = "via [$symbol$branch]($style) "
-style = "bold fg:git"
-symbol = " "
+format = '[git:\(](bold blue)[$branch](red)[\)](bold blue) '
+symbol = ''
 
-[package]
-format = '[ $symbol($version) ]($style)'
-style = "bg:package fg:text_light"
-symbol = "v"
-disabled = false
-
-[golang]
-format = '[ $symbol$version ]($style)'
-style = "bg:golang fg:text_light"
-symbol = " "
+[git_status]
 disabled = true
 
-[docker_context]
-disabled=true
-symbol = " "
-
-[fill]
-symbol = " "
-
-[nodejs]
-format = "[ $symbol$version ]($style)"
-style = "bg:node fg:text_light"
-symbol = " "
-version_format = "${raw}"
-disabled=false
-
-[python]
-disabled=false
-format = '[ ${symbol}${pyenv_prefix}(${version})( \($virtualenv\)) ]($style)'
-symbol = " "
-version_format = "${raw}"
-style = "bg:python fg:text_light"
-
-[conda]
-format = "[ $symbol$environment ]($style)"
-style = "bg:conda fg:text_light"
-ignore_base = false
-disabled = true
-symbol = " "
-
-[java]
-format = "[ $symbol$version ]($style)"
-style = "bg:java fg:text_light"
-version_format = "${raw}"
-symbol = " "
-disabled = true
-
-[c]
-format = "[ $symbol($version(-$name)) ]($style)"
-style = "bg:clang fg:text_light"
-symbol = " "
-version_format = "${raw}"
-disabled=true
-
-[rust]
-format ="[ $symbol$version ]($style)"
-style = "bg:rust fg:text_light"
-symbol = " "
-version_format = "${raw}"
-disabled=true
-
-[bun]
-format = "[ $symbol$version ]($style)"
-style = "bg:bun fg:text_light"
-symbol = " "
-version_format = "${raw}"
-
-[swift]
-format = "[ $symbol$version ]($style)"
-style = "bg:swift fg:text_light"
-symbol = " "
-version_format = "${raw}"
-disabled=true
+[custom.git_dirty]
+command = 'echo "✗"'
+when = '[ -n "$(git status --porcelain 2>/dev/null)" ]'
+format = '[$output](yellow) '
+require_repo = true
