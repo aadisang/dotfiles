@@ -7,5 +7,3 @@ window-save-state = always
 cursor-style = bar
 macos-custom-icon = '~/.config/ghostty/icon.icns'
 copy-on-select = clipboard
-confirm-close-surface = false
-auto-update-channel = tip
