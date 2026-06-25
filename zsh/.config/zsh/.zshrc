@@ -53,6 +53,7 @@ path=(
   $HOME/.local/bin(N)
   $ANDROID_HOME/{emulator,platform-tools}(N)
   /Applications/iTerm.app/Contents/Resources/utilities(N)
+  $HOME/.moon/bin(N)
 )
 
 # Completion functions need to be on $fpath before compinit runs.
