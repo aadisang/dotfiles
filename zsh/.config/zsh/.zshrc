@@ -1,12 +1,16 @@
 # Znap plugin manager
-[[ -r $ZDOTDIR/.zsh-snap/znap.zsh ]] ||
+zstyle ':znap:*' repos-dir "$ZDOTDIR/.zsh-plugins"
+[[ -r "$ZDOTDIR/.zsh-snap/znap.zsh" ]] ||
   git clone --depth 1 -- \
-    https://github.com/marlonrichert/zsh-snap.git $ZDOTDIR/.zsh-snap
-source $ZDOTDIR/.zsh-snap/znap.zsh
+    https://github.com/marlonrichert/zsh-snap.git "$ZDOTDIR/.zsh-snap"
+source "$ZDOTDIR/.zsh-snap/znap.zsh"
 
 # Prompt 
 znap eval starship 'starship init zsh --print-full-init'
 znap prompt
+
+# Vite+ sets PATH and provides the vp wrapper.
+[[ -r "$HOME/.vite-plus/env" ]] && source "$HOME/.vite-plus/env"
 
 # Development tools and language managers
 export BUN_INSTALL="$HOME/.bun"
@@ -19,6 +23,7 @@ export PNPM_HOME="$HOME/.local/share/pnpm"
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export SDKMAN_DIR="$HOME/.sdkman"
 export QMK_HOME="$HOME/qmk_firmware"
+export AGENT_BROWSER_ENGINE=lightpanda
 
 typeset -U path fpath
 
@@ -43,6 +48,7 @@ setopt PUSHD_SILENT
 
 # PATH setup ()
 path=(
+  $VP_HOME/bin(N)
   $BUN_INSTALL/bin(N)
   /opt/homebrew/{bin,sbin}(N)
   /opt/homebrew/opt/e2fsprogs/bin(N)
@@ -53,7 +59,9 @@ path=(
   $HOME/.local/bin(N)
   $ANDROID_HOME/{emulator,platform-tools}(N)
   /Applications/iTerm.app/Contents/Resources/utilities(N)
+  $HOME/.opencode/bin(N)
   $HOME/.moon/bin(N)
+  $HOME/.local/bin/lightpanda(N)
 )
 
 # Completion functions need to be on $fpath before compinit runs.
@@ -61,12 +69,6 @@ fpath=(
   $BUN_INSTALL(N)
   $fpath
 )
-
-# Vite+ ships an env script that sets PATH and the vp() wrapper.
-[ -r "$HOME/.vite-plus/env" ] && . "$HOME/.vite-plus/env"
-
-# Znap repos directory
-zstyle ':znap:*' repos-dir $ZDOTDIR/.zsh-plugins
 
 # Tab completion styles 
 zstyle ':completion:*' menu select
@@ -135,7 +137,7 @@ znap eval zoxide 'zoxide init zsh'
 znap eval try 'ruby ~/.local/try.rb init ~/Developer/tries'
 
 # Completions
-znap eval brew 'brew shellenv'
+znap eval vp 'VP_COMPLETE=zsh command vp'
 
 local _sitefunc=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/site-functions
 [[ -x ${commands[glow]-} ]] && [[ ! -e $_sitefunc/_glow ]] && znap fpath _glow 'glow completion zsh'
@@ -162,6 +164,7 @@ alias fetch='fastfetch'
 alias c='clear'
 alias spot="spotify_player"
 alias serve="bunx live-server --port=5500 ."
+alias oc='opencode'
 
 # Git aliases
 alias ga="git add"
@@ -172,6 +175,3 @@ alias gg="git add "
 alias gs="git status"
 alias gst="git stash"
 alias gstp="git stash pop"
-
-# bun completions
-[ -s "/Users/charon/.bun/_bun" ] && source "/Users/charon/.bun/_bun"
