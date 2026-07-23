@@ -151,8 +151,6 @@ local _sitefunc=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/site-functions
 znap function _sdk sdk 'source "$SDKMAN_DIR/bin/sdkman-init.sh"'
 compctl -K _sdk sdk
 
-znap eval thefuck 'thefuck --alias'
-
 # Command aliases
 alias ls='eza --icons -1'
 alias ll='eza --icons -l'
@@ -162,7 +160,6 @@ alias cat='bat --style=plain'
 alias ipaddr='ipconfig getifaddr en0'
 alias fetch='fastfetch'
 alias c='clear'
-alias spot="spotify_player"
 alias serve="bunx live-server --port=5500 ."
 alias oc='opencode'
 
