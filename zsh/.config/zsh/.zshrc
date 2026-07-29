@@ -9,7 +9,6 @@ source "$ZDOTDIR/.zsh-snap/znap.zsh"
 znap eval starship 'starship init zsh --print-full-init'
 znap prompt
 
-# Vite+ sets PATH and provides the vp wrapper.
 [[ -r "$HOME/.vite-plus/env" ]] && source "$HOME/.vite-plus/env"
 
 # Development tools and language managers
@@ -22,7 +21,6 @@ export VISUAL="zed"
 export PNPM_HOME="$HOME/.local/share/pnpm"
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export SDKMAN_DIR="$HOME/.sdkman"
-export QMK_HOME="$HOME/qmk_firmware"
 export AGENT_BROWSER_ENGINE=lightpanda
 
 typeset -U path fpath
@@ -30,7 +28,6 @@ typeset -U path fpath
 # History settings
 export HISTFILE="$ZDOTDIR/.zsh_history"
 setopt EXTENDED_HISTORY
-setopt INC_APPEND_HISTORY
 setopt SHARE_HISTORY
 setopt HIST_EXPIRE_DUPS_FIRST
 setopt HIST_IGNORE_DUPS
@@ -46,19 +43,16 @@ setopt AUTO_PUSHD
 setopt PUSHD_IGNORE_DUPS
 setopt PUSHD_SILENT
 
-# PATH setup ()
+# PATH setup
 path=(
-  $VP_HOME/bin(N)
   $BUN_INSTALL/bin(N)
   /opt/homebrew/{bin,sbin}(N)
-  /opt/homebrew/opt/e2fsprogs/bin(N)
   /usr/local/bin(N)
   $HOME/.cargo/bin(N)
   $PNPM_HOME(N)
   $path
   $HOME/.local/bin(N)
   $ANDROID_HOME/{emulator,platform-tools}(N)
-  /Applications/iTerm.app/Contents/Resources/utilities(N)
   $HOME/.opencode/bin(N)
   $HOME/.moon/bin(N)
   $HOME/.local/bin/lightpanda(N)
@@ -137,10 +131,9 @@ znap eval zoxide 'zoxide init zsh'
 znap eval try 'ruby ~/.local/try.rb init ~/Developer/tries'
 
 # Completions
-znap eval vp 'VP_COMPLETE=zsh command vp'
-
 local _sitefunc=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/site-functions
 [[ -x ${commands[glow]-} ]] && [[ ! -e $_sitefunc/_glow ]] && znap fpath _glow 'glow completion zsh'
+[[ -x ${commands[mole]-} ]] && [[ ! -e $_sitefunc/_mole ]] && znap fpath _mole 'mole completion zsh'
 [[ -x ${commands[tailscale]-} ]] && [[ ! -e $_sitefunc/_tailscale ]] && znap fpath _tailscale 'tailscale completion zsh'
 [[ -x ${commands[uv]-} ]] && [[ ! -e $_sitefunc/_uv ]] && znap fpath _uv 'uv generate-shell-completion zsh'
 [[ -x ${commands[uvx]-} ]] && [[ ! -e $_sitefunc/_uvx ]] && znap fpath _uvx 'uvx --generate-shell-completion zsh'
