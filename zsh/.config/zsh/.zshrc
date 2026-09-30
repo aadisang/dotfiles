@@ -9,8 +9,6 @@ source "$ZDOTDIR/.zsh-snap/znap.zsh"
 znap eval starship 'starship init zsh --print-full-init'
 znap prompt
 
-[[ -r "$HOME/.vite-plus/env" ]] && source "$HOME/.vite-plus/env"
-
 # Development tools and language managers
 export BUN_INSTALL="$HOME/.bun"
 export XDG_CONFIG_HOME="$HOME/.config"
@@ -20,8 +18,6 @@ export EDITOR="zed"
 export VISUAL="zed"
 export PNPM_HOME="$HOME/.local/share/pnpm"
 export ANDROID_HOME=$HOME/Library/Android/sdk
-export SDKMAN_DIR="$HOME/.sdkman"
-export AGENT_BROWSER_ENGINE=lightpanda
 
 typeset -U path fpath
 
@@ -45,11 +41,12 @@ setopt PUSHD_SILENT
 
 # PATH setup
 path=(
+  $VP_HOME/bin(N)
   $BUN_INSTALL/bin(N)
   /opt/homebrew/{bin,sbin}(N)
   /usr/local/bin(N)
   $HOME/.cargo/bin(N)
-  $PNPM_HOME(N)
+  $PNPM_HOME/bin(N)
   $path
   $HOME/.local/bin(N)
   $ANDROID_HOME/{emulator,platform-tools}(N)
@@ -59,7 +56,9 @@ path=(
 )
 
 # Completion functions need to be on $fpath before compinit runs.
+local _sitefunc=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/site-functions
 fpath=(
+  $_sitefunc(N)
   $BUN_INSTALL(N)
   $fpath
 )
@@ -131,7 +130,6 @@ znap eval zoxide 'zoxide init zsh'
 znap eval try 'ruby ~/.local/try.rb init ~/Developer/tries'
 
 # Completions
-local _sitefunc=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/site-functions
 [[ -x ${commands[glow]-} ]] && [[ ! -e $_sitefunc/_glow ]] && znap fpath _glow 'glow completion zsh'
 [[ -x ${commands[mole]-} ]] && [[ ! -e $_sitefunc/_mole ]] && znap fpath _mole 'mole completion zsh'
 [[ -x ${commands[tailscale]-} ]] && [[ ! -e $_sitefunc/_tailscale ]] && znap fpath _tailscale 'tailscale completion zsh'
@@ -139,10 +137,9 @@ local _sitefunc=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/site-functions
 [[ -x ${commands[uvx]-} ]] && [[ ! -e $_sitefunc/_uvx ]] && znap fpath _uvx 'uvx --generate-shell-completion zsh'
 [[ -x ${commands[rustup]-} ]] && [[ ! -e $_sitefunc/_rustup ]] && znap fpath _rustup 'rustup completions zsh'
 [[ -x ${commands[rustup]-} ]] && [[ ! -e $_sitefunc/_cargo ]] && znap fpath _cargo 'rustup completions zsh cargo'
-
-# Lazy-load heavy tools on first use
-znap function _sdk sdk 'source "$SDKMAN_DIR/bin/sdkman-init.sh"'
-compctl -K _sdk sdk
+autoload -Uz _uv _uvx
+compdef _uv uv
+compdef _uvx uvx
 
 # Command aliases
 alias ls='eza --icons -1'
@@ -165,3 +162,19 @@ alias gg="git add "
 alias gs="git status"
 alias gst="git stash"
 alias gstp="git stash pop"
+
+# Delete every local Time Machine snapshot on the startup disk.
+delsnap() {
+  local snapshot timestamp
+  local -a snapshots
+
+  snapshots=("${(@f)$(tmutil listlocalsnapshots / 2>/dev/null)}")
+
+  for snapshot in $snapshots; do
+    [[ $snapshot == com.apple.TimeMachine.*.local ]] || continue
+
+    timestamp=${snapshot#com.apple.TimeMachine.}
+    timestamp=${timestamp%.local}
+    tmutil deletelocalsnapshots "$timestamp" || return
+  done
+}
