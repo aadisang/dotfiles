@@ -5,9 +5,10 @@ zstyle ':znap:*' repos-dir "$ZDOTDIR/.zsh-plugins"
     https://github.com/marlonrichert/zsh-snap.git "$ZDOTDIR/.zsh-snap"
 source "$ZDOTDIR/.zsh-snap/znap.zsh"
 
-# Prompt 
+# Draw the prompt once, when the line editor is ready.
 znap eval starship 'starship init zsh --print-full-init'
-znap prompt
+# There is no right prompt; avoid launching Starship to render an empty one.
+RPROMPT=''
 
 # Development tools and language managers
 export BUN_INSTALL="$HOME/.bun"
@@ -116,10 +117,20 @@ HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_TIMEOUT=0.08
 zle_highlight=('paste:fg=#6e7072')
 
 # Plugins
-znap source zsh-users/zsh-autosuggestions
-znap source zsh-users/zsh-history-substring-search
-znap source zdharma-continuum/fast-syntax-highlighting
-znap source peterhurford/up.zsh
+# Bind once at the first prompt, after all plugins have loaded.
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+local _plugin
+for _plugin in \
+  zsh-users/zsh-autosuggestions \
+  zsh-users/zsh-history-substring-search \
+  zdharma-continuum/fast-syntax-highlighting \
+  peterhurford/up.zsh
+do
+  # Full repo names trigger clone subprocesses even when already installed.
+  [[ -d "$ZDOTDIR/.zsh-plugins/$_plugin/.git" ]] || znap clone "$_plugin"
+  znap source "${_plugin:t}"
+done
+unset _plugin
 
 # Arrow keys search history
 bindkey '^[[A' history-substring-search-up

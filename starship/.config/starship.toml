@@ -24,7 +24,8 @@ symbol = ''
 disabled = true
 
 [custom.git_dirty]
-command = 'echo "✗"'
-when = '[ -n "$(git status --porcelain 2>/dev/null)" ]'
+shell = ['/bin/sh']
+command = '[ -z "$(git status --porcelain 2>/dev/null)" ] || printf "✗"'
+when = true
 format = '[$output](yellow) '
 require_repo = true
